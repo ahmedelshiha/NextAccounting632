@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { withAdminAuth, AuthenticatedRequest } from '@/lib/auth-middleware'
 
+export const dynamic = 'force-dynamic'
+
 export const GET = withAdminAuth(async (req: AuthenticatedRequest, context: any) => {
   try {
     const { id } = context?.params || {}
