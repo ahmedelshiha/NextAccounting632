@@ -115,10 +115,10 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
+            {form.error && (
               <div className="p-3 rounded-lg bg-red-50 border border-red-200 flex gap-2">
                 <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-sm text-red-700">{form.error}</p>
               </div>
             )}
 
@@ -127,10 +127,11 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
               <Input
                 id="name"
                 placeholder="Client name"
-                value={formData.name}
-                onChange={(e) => handleChange('name', e.target.value)}
-                disabled={isSubmitting}
+                value={form.formData.name}
+                onChange={(e) => form.handleChange('name', e.target.value)}
+                disabled={form.isSubmitting}
               />
+              {form.fieldErrors.name && <p className="text-sm text-red-600">{form.fieldErrors.name}</p>}
             </div>
 
             <div className="space-y-2">
@@ -139,10 +140,11 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
                 id="email"
                 type="email"
                 placeholder="client@example.com"
-                value={formData.email}
-                onChange={(e) => handleChange('email', e.target.value)}
-                disabled={isSubmitting}
+                value={form.formData.email}
+                onChange={(e) => form.handleChange('email', e.target.value)}
+                disabled={form.isSubmitting}
               />
+              {form.fieldErrors.email && <p className="text-sm text-red-600">{form.fieldErrors.email}</p>}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -151,9 +153,9 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
                 <Input
                   id="phone"
                   placeholder="Phone number"
-                  value={formData.phone}
-                  onChange={(e) => handleChange('phone', e.target.value)}
-                  disabled={isSubmitting}
+                  value={form.formData.phone || ''}
+                  onChange={(e) => form.handleChange('phone', e.target.value)}
+                  disabled={form.isSubmitting}
                 />
               </div>
 
@@ -162,9 +164,9 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
                 <Input
                   id="company"
                   placeholder="Company name"
-                  value={formData.company}
-                  onChange={(e) => handleChange('company', e.target.value)}
-                  disabled={isSubmitting}
+                  value={form.formData.company || ''}
+                  onChange={(e) => form.handleChange('company', e.target.value)}
+                  disabled={form.isSubmitting}
                 />
               </div>
             </div>
@@ -172,7 +174,7 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label htmlFor="tier">Tier</Label>
-                <Select value={formData.tier} onValueChange={(value) => handleChange('tier', value as any)}>
+                <Select value={form.formData.tier} onValueChange={(value) => form.handleChange('tier', value)}>
                   <SelectTrigger id="tier">
                     <SelectValue />
                   </SelectTrigger>
@@ -186,7 +188,7 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
 
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <Select value={formData.status} onValueChange={(value) => handleChange('status', value as any)}>
+                <Select value={form.formData.status} onValueChange={(value) => form.handleChange('status', value)}>
                   <SelectTrigger id="status">
                     <SelectValue />
                   </SelectTrigger>
@@ -204,9 +206,9 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
               <Input
                 id="address"
                 placeholder="Street address"
-                value={formData.address}
-                onChange={(e) => handleChange('address', e.target.value)}
-                disabled={isSubmitting}
+                value={form.formData.address || ''}
+                onChange={(e) => form.handleChange('address', e.target.value)}
+                disabled={form.isSubmitting}
               />
             </div>
 
@@ -216,9 +218,9 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
                 <Input
                   id="city"
                   placeholder="City"
-                  value={formData.city}
-                  onChange={(e) => handleChange('city', e.target.value)}
-                  disabled={isSubmitting}
+                  value={form.formData.city || ''}
+                  onChange={(e) => form.handleChange('city', e.target.value)}
+                  disabled={form.isSubmitting}
                 />
               </div>
 
@@ -227,9 +229,9 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
                 <Input
                   id="country"
                   placeholder="Country"
-                  value={formData.country}
-                  onChange={(e) => handleChange('country', e.target.value)}
-                  disabled={isSubmitting}
+                  value={form.formData.country || ''}
+                  onChange={(e) => form.handleChange('country', e.target.value)}
+                  disabled={form.isSubmitting}
                 />
               </div>
             </div>
@@ -239,9 +241,9 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
               <Textarea
                 id="notes"
                 placeholder="Additional notes"
-                value={formData.notes}
-                onChange={(e) => handleChange('notes', e.target.value)}
-                disabled={isSubmitting}
+                value={form.formData.notes || ''}
+                onChange={(e) => form.handleChange('notes', e.target.value)}
+                disabled={form.isSubmitting}
                 rows={3}
               />
             </div>
@@ -251,15 +253,15 @@ export const ClientFormModal = React.forwardRef<HTMLDivElement, ClientFormModalP
                 type="button"
                 variant="outline"
                 onClick={onClose}
-                disabled={isSubmitting}
+                disabled={form.isSubmitting}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={form.isSubmitting}
               >
-                {isSubmitting ? (
+                {form.isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     {mode === 'create' ? 'Creating...' : 'Updating...'}
