@@ -63,6 +63,17 @@ export function useUserManagementSettings(): UseUserManagementSettingsReturn {
         const data = await response.json() as UserManagementSettings
         setSettings(data)
 
+        // Log audit event
+        const userId = (session?.user as any)?.id || 'unknown'
+        const tenantId = (session?.user as any)?.tenantId || 'unknown'
+
+        await AuditLoggingService.logSettingsChange(
+          userId,
+          tenantId,
+          'user-management',
+          updates
+        )
+
         // Emit event for real-time sync
         globalEventEmitter.emit('settings:changed', {
           section: 'user-management',
