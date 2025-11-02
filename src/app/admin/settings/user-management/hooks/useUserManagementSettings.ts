@@ -19,6 +19,7 @@ interface UseUserManagementSettingsReturn {
 }
 
 export function useUserManagementSettings(): UseUserManagementSettingsReturn {
+  const { data: session } = useSession()
   const [settings, setSettings] = useState<UserManagementSettings | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
