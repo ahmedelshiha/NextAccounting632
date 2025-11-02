@@ -14,6 +14,7 @@ interface ReviewStepProps {
   dryRunResults?: any
   onDryRun: (results: any) => void
   onNext: () => void
+  onExecuteStart?: () => void | Promise<void>
 }
 
 export const ReviewStep: React.FC<ReviewStepProps> = ({
@@ -23,7 +24,8 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
   operationConfig,
   dryRunResults,
   onDryRun,
-  onNext
+  onNext,
+  onExecuteStart
 }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
