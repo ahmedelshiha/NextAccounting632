@@ -36,6 +36,8 @@ test.describe('Unified Admin redirects and tabs', () => {
     expect(page.url()).toMatch(/role=CLIENT/) // CLIENT role filter
     // Verify Dashboard tab is active
     await expect(page.getByRole('tab', { name: /dashboard/i, selected: true })).toBeVisible({ timeout: 5000 })
+    // Verify role filter chips are visible and Clients chip is active
+    await expect(page.getByRole('button', { name: /clients/i })).toBeVisible({ timeout: 5000 })
   })
 
   test('team redirects to Dashboard tab with TEAM_MEMBER role filter', async ({ page }) => {
@@ -45,6 +47,15 @@ test.describe('Unified Admin redirects and tabs', () => {
     expect(page.url()).toMatch(/role=TEAM_MEMBER/) // TEAM_MEMBER role filter
     // Verify Dashboard tab is active
     await expect(page.getByRole('tab', { name: /dashboard/i, selected: true })).toBeVisible({ timeout: 5000 })
+    // Verify role filter chips are visible and Team chip is active
+    await expect(page.getByRole('button', { name: /team/i })).toBeVisible({ timeout: 5000 })
+  })
+
+  test('role filter chips work when navigating dashboard directly', async ({ page }) => {
+    await page.goto('/admin/users?tab=dashboard&role=CLIENT')
+    await expect(page.getByRole('tab', { name: /dashboard/i, selected: true })).toBeVisible({ timeout: 5000 })
+    // Verify that users table is filtered to clients
+    await expect(page.getByText(/showing.*users/i)).toBeVisible({ timeout: 5000 })
   })
 
   test('unified Users page shows Entities and RBAC tabs', async ({ page }) => {

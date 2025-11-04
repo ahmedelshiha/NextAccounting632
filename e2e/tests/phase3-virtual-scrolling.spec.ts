@@ -18,18 +18,19 @@ async function devLoginAndSetCookie(page: any, request: any, baseURL: string | u
 test.describe('Phase 3: Virtual Scrolling Implementation', () => {
   test.beforeEach(async ({ page, request, baseURL }) => {
     await devLoginAndSetCookie(page, request, baseURL, 'admin@accountingfirm.com')
-    await page.goto('/admin/users')
+    // Navigate to Dashboard Operations tab which has the virtualized user directory
+    await page.goto('/admin/users?tab=dashboard')
 
     // Wait for main content to load
     await expect(page.getByRole('heading')).first().toBeVisible({ timeout: 5000 })
   })
 
   test.describe('VirtualizedDataTable Component', () => {
-    test('should render users table on dashboard', async ({ page }) => {
-      // Navigate to Entities tab if needed
-      const entitiesTab = page.getByRole('tab', { name: /entities/i })
-      if (await entitiesTab.isVisible()) {
-        await entitiesTab.click()
+    test('should render users table on dashboard operations', async ({ page }) => {
+      // Navigate to Operations sub-tab if in Overview
+      const operationsTab = page.getByRole('tab', { name: /operations/i })
+      if (await operationsTab.isVisible()) {
+        await operationsTab.click()
         await page.waitForTimeout(1000)
       }
 
@@ -39,29 +40,29 @@ test.describe('Phase 3: Virtual Scrolling Implementation', () => {
     })
 
     test('should display virtualized rows with fixed height', async ({ page }) => {
-      // Navigate to Entities tab
-      const entitiesTab = page.getByRole('tab', { name: /entities/i })
-      if (await entitiesTab.isVisible()) {
-        await entitiesTab.click()
+      // Navigate to Operations sub-tab
+      const operationsTab = page.getByRole('tab', { name: /operations/i })
+      if (await operationsTab.isVisible()) {
+        await operationsTab.click()
         await page.waitForTimeout(1000)
       }
 
       // Get the table container
       const tableContainer = page.locator('[role="grid"], table').first()
-      
+
       // Should have visible rows
       const rows = tableContainer.locator('tbody tr, [role="row"]')
       const rowCount = await rows.count()
-      
+
       // Should have at least some rows visible
       expect(rowCount).toBeGreaterThan(0)
     })
 
     test('should handle row selection without performance degradation', async ({ page }) => {
-      // Navigate to Entities tab
-      const entitiesTab = page.getByRole('tab', { name: /entities/i })
-      if (await entitiesTab.isVisible()) {
-        await entitiesTab.click()
+      // Navigate to Operations sub-tab
+      const operationsTab = page.getByRole('tab', { name: /operations/i })
+      if (await operationsTab.isVisible()) {
+        await operationsTab.click()
         await page.waitForTimeout(1000)
       }
 
@@ -69,7 +70,7 @@ test.describe('Phase 3: Virtual Scrolling Implementation', () => {
       const firstCheckbox = page.locator('input[type="checkbox"]').first()
       if (await firstCheckbox.isVisible({ timeout: 1000 })) {
         await firstCheckbox.click()
-        
+
         // Verify it's selected (has checked attribute)
         const isChecked = await firstCheckbox.isChecked()
         expect(isChecked).toBe(true)
@@ -77,10 +78,10 @@ test.describe('Phase 3: Virtual Scrolling Implementation', () => {
     })
 
     test('should support sorting without re-rendering entire list', async ({ page }) => {
-      // Navigate to Entities tab
-      const entitiesTab = page.getByRole('tab', { name: /entities/i })
-      if (await entitiesTab.isVisible()) {
-        await entitiesTab.click()
+      // Navigate to Operations sub-tab
+      const operationsTab = page.getByRole('tab', { name: /operations/i })
+      if (await operationsTab.isVisible()) {
+        await operationsTab.click()
         await page.waitForTimeout(1000)
       }
 
@@ -88,7 +89,7 @@ test.describe('Phase 3: Virtual Scrolling Implementation', () => {
       const sortableHeader = page.locator('th[role="columnheader"], [role="columnheader"]').first()
       if (await sortableHeader.isVisible({ timeout: 1000 })) {
         await sortableHeader.click()
-        
+
         // Verify table is still interactive
         const tableContainer = page.locator('[role="grid"], table').first()
         await expect(tableContainer).toBeVisible()
