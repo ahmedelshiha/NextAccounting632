@@ -113,14 +113,14 @@ export function WorkstationIntegrated({
     handleFiltersChange(newFilters)
   }, [handleFiltersChange])
 
-  // Handle user selection for profile dialog
-  const handleSelectUser = useCallback((user: UserItem) => {
+  // Handle opening user profile dialog
+  const handleViewProfile = useCallback((user: UserItem) => {
     context.setSelectedUser(user)
     context.setProfileOpen(true)
   }, [context])
 
   // Handle selection updates from table
-  const handleSelectUser = useCallback((userId: string, selected: boolean) => {
+  const handleSelectUserSelection = useCallback((userId: string, selected: boolean) => {
     const next = new Set(workstationContext.selectedUserIds)
     if (selected) next.add(userId); else next.delete(userId)
     workstationContext.setSelectedUserIds(next)
@@ -144,7 +144,7 @@ export function WorkstationIntegrated({
     try {
       await workstationContext.applyBulkAction()
       toast.success('Bulk action applied successfully')
-      handleClearSelection()
+      workstationContext.setSelectedUserIds(new Set())
     } catch (error) {
       toast.error('Failed to apply bulk action')
       console.error('Bulk action error:', error)
@@ -203,9 +203,9 @@ export function WorkstationIntegrated({
             <UsersTable
               users={users}
               isLoading={isLoading}
-              onViewProfile={(u) => handleSelectUser(u)}
+              onViewProfile={handleViewProfile}
               selectedUserIds={workstationContext.selectedUserIds}
-              onSelectUser={handleSelectUser}
+              onSelectUser={handleSelectUserSelection}
               onSelectAll={handleSelectAll}
             />
           )}
