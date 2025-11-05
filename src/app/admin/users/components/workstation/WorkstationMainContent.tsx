@@ -5,6 +5,53 @@ import { Loader2 } from 'lucide-react'
 import type { WorkstationMainContentProps } from '../../types/workstation'
 import './workstation.css'
 
+/**
+ * WorkstationMainContent Component
+ *
+ * Phase 2: Main content area with actions, metrics, and user directory
+ * - Quick actions bar (Add User, Import, Bulk, Export)
+ * - Operations overview cards showing key metrics
+ * - Users table with inline actions and sorting
+ * - Refresh button to reload user data
+ * - Full responsive support
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <WorkstationMainContent
+ *   users={usersList}
+ *   stats={operationStats}
+ *   isLoading={loading}
+ *   onAddUser={handleAddUser}
+ *   onImport={handleImport}
+ *   onBulkOperation={handleBulk}
+ *   onExport={handleExport}
+ *   onRefresh={handleRefresh}
+ * />
+ * ```
+ *
+ * @param {WorkstationMainContentProps} props - Component props
+ * @returns {React.ReactElement} Rendered main content area
+ *
+ * Accessibility:
+ * - Semantic <main> element as container
+ * - ARIA labels on all action buttons
+ * - Loading spinner with aria-busy
+ * - Table with proper headers and role attributes
+ * - Focus visible outlines on all interactive elements
+ * - Proper heading hierarchy
+ *
+ * Performance:
+ * - Memoized with React.memo to prevent unnecessary re-renders
+ * - Lazy loading for charts and analytics
+ * - Efficient state management for refresh operations
+ * - No unnecessary re-renders on parent updates
+ *
+ * Responsive:
+ * - Desktop: Full 3-column layout
+ * - Tablet: 2-column (sidebar drawer + main content)
+ * - Mobile: Single column, full-width
+ */
 export const WorkstationMainContent = memo(function WorkstationMainContent({
   users,
   stats,

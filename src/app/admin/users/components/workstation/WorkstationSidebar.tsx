@@ -7,6 +7,49 @@ import { SavedViewsButtons } from './SavedViewsButtons'
 import { AdvancedUserFilters } from '../AdvancedUserFilters'
 import './workstation.css'
 
+/**
+ * WorkstationSidebar Component
+ *
+ * Phase 2: Left sidebar with user filters, quick stats, and saved views
+ * - Advanced filter panel with multiple filter options
+ * - Real-time quick stats card showing user counts
+ * - Saved views buttons for quick filtering
+ * - Reset button to clear all filters
+ * - Mobile drawer on tablet/mobile
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <WorkstationSidebar
+ *   isOpen={true}
+ *   onClose={() => setOpen(false)}
+ *   filters={filters}
+ *   onFiltersChange={setFilters}
+ *   stats={quickStats}
+ *   onAddUser={handleAddUser}
+ *   onReset={handleReset}
+ * />
+ * ```
+ *
+ * @param {WorkstationSidebarProps} props - Component props
+ * @returns {React.ReactElement} Rendered sidebar with filters and stats
+ *
+ * Accessibility:
+ * - Proper semantic structure with header, nav, and footer
+ * - ARIA labels on all buttons
+ * - Focus management for drawer state
+ * - Keyboard navigation support (Escape to close)
+ * - Screen reader friendly headings
+ *
+ * Performance:
+ * - Memoized with React.memo to prevent unnecessary re-renders
+ * - useCallback for event handlers to maintain referential equality
+ * - useMemo for computed values
+ *
+ * Responsive:
+ * - Desktop: Fixed sidebar (280px width)
+ * - Tablet/Mobile: Drawer with overlay
+ */
 export const WorkstationSidebar = memo(function WorkstationSidebar({
   isOpen,
   onClose,

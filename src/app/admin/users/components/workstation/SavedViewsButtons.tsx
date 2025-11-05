@@ -22,14 +22,48 @@ interface SavedViewsButtonsProps {
 
 /**
  * SavedViewsButtons Component
- * Quick access buttons for common user role filters
+ *
+ * Phase 2: Quick-access buttons for predefined user role filters
+ * Allows users to switch between different views of the user directory:
+ * - All Users: Complete user list (no filter)
+ * - Clients: Filtered to CLIENT role only
+ * - Team: Filtered to team roles (TEAM_MEMBER, TEAM_LEAD, STAFF)
+ * - Admins: Filtered to admin-level roles
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <SavedViewsButtons
+ *   activeView="team"
+ *   onViewChange={(viewName, roleFilter) => setActiveView(viewName)}
+ *   viewCounts={{ all: 150, clients: 45, team: 100, admins: 5 }}
+ * />
+ * ```
+ *
+ * @param {SavedViewsButtonsProps} props - Component props
+ * @param {string} [props.activeView] - Currently active view (default: 'all')
+ * @param {(viewName: string, roleFilter?: string) => void} props.onViewChange - Callback when view changes
+ * @param {Record<string, number>} [props.viewCounts] - User counts for each view
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {React.ReactElement} Rendered view buttons
  *
  * Views:
- * - All Users: No filter
- * - Clients: role=CLIENT (single role)
- * - Team: role=TEAM (aggregates TEAM_MEMBER, TEAM_LEAD, STAFF roles)
- *   Note: Backend should interpret 'TEAM' as filter for all internal team roles
- * - Admins: role=ADMIN (includes all admin level roles)
+ * - All Users: No role filter applied
+ * - Clients: role=CLIENT (single role filter)
+ * - Team: role=TEAM (interpreted as multiple internal team roles by backend)
+ * - Admins: role=ADMIN (includes all admin-level roles)
+ *
+ * Accessibility:
+ * - Buttons have aria-current="page" when active
+ * - ARIA labels include user counts
+ * - Icon + text for visibility
+ * - Full keyboard navigation (Tab, Space/Enter to select)
+ * - Focus visible outlines
+ *
+ * Performance:
+ * - No React.memo needed (simple button group)
+ * - Efficient state updates via callback
+ * - No expensive computations
  */
 export function SavedViewsButtons({
   activeView = 'all',
