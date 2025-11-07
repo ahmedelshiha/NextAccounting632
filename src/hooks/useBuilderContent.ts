@@ -53,7 +53,7 @@ export function useBuilderContent(
   const config = getBuilderConfig()
   const cacheTime = options?.cacheTime ?? config.cacheTime ?? 5 * 60 * 1000 // 5 minutes default
   const retryCount = options?.retryCount ?? 1
-  const abortControllerRef = useRef<AbortController>()
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     if (!config.isEnabled) {
