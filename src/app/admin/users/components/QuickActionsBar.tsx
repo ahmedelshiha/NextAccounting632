@@ -46,7 +46,7 @@ export function QuickActionsBar({
           <Button
             onClick={onAddUser}
             disabled={isLoading}
-            className="bg-blue-500 hover:bg-blue-600 text-white border border-white text-sm font-medium h-10 px-4"
+            className="bg-white hover:bg-gray-50 text-blue-600 font-medium text-sm h-10 px-4"
             title="Add new user"
             aria-label="Add new user"
           >
@@ -57,8 +57,7 @@ export function QuickActionsBar({
           <Button
             onClick={onImport}
             disabled={isLoading}
-            variant="outline"
-            className="border-white text-white hover:bg-blue-600 text-sm font-medium h-10 px-4"
+            className="border border-white text-white hover:bg-blue-600 text-sm font-medium h-10 px-4"
             title="Import users"
             aria-label="Import users"
           >
@@ -69,8 +68,7 @@ export function QuickActionsBar({
           <Button
             onClick={onExport}
             disabled={isLoading}
-            variant="outline"
-            className="border-white text-white hover:bg-blue-600 text-sm font-medium h-10 px-4"
+            className="border border-white text-white hover:bg-blue-600 text-sm font-medium h-10 px-4"
             title="Export user list"
             aria-label="Export user list"
           >
