@@ -3,6 +3,9 @@
 import React, { memo, useCallback, useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
   SelectContent,
@@ -12,33 +15,42 @@ import {
 } from '@/components/ui/select'
 import { UserItem } from '../../contexts/UsersContextProvider'
 import { useUsersContext } from '../../contexts/UsersContextProvider'
-import { Shield, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Shield, AlertCircle, CheckCircle2, Save, RotateCcw, Eye, EyeOff, Loader2, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { apiFetch } from '@/lib/api'
 import type { Permission } from '@/lib/permissions'
 import { PERMISSIONS, PERMISSION_METADATA, ROLE_PERMISSIONS } from '@/lib/permissions'
+import { cn } from '@/lib/utils'
 
 interface PermissionsTabProps {
   user: UserItem
 }
 
+type TabType = 'role' | 'custom' | 'history'
+
 export const PermissionsTab = memo(function PermissionsTab({ user }: PermissionsTabProps) {
   const { setSelectedUser } = useUsersContext()
+  const [activeTab, setActiveTab] = useState<TabType>('role')
   const [isSaving, setIsSaving] = useState(false)
-  const [selectedRole, setSelectedRole] = useState<'ADMIN' | 'CLIENT' | 'TEAM_MEMBER' | 'TEAM_LEAD' | 'STAFF' | 'VIEWER'>(user.role || 'VIEWER')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showAdvanced, setShowAdvanced] = useState(false)
+  const [selectedRole, setSelectedRole] = useState<string>(user.role || 'CLIENT')
   const [selectedPermissions, setSelectedPermissions] = useState<Permission[]>(
     (user.permissions as Permission[]) || []
   )
   const [error, setError] = useState<string | null>(null)
+  const [changeHistory, setChangeHistory] = useState<Array<{ role: string; permissions: Permission[] }>>([])
 
   // Check if there are changes
+  const changeCount = useMemo(() => {
+    const added = selectedPermissions.filter(p => !(user.permissions as Permission[])?.includes(p))
+    const removed = ((user.permissions as Permission[]) || []).filter(p => !selectedPermissions.includes(p))
+    return added.length + removed.length
+  }, [selectedPermissions, user])
+
   const hasChanges = useMemo(() => {
-    const roleChanged = selectedRole !== user.role
-    const permsChanged =
-      selectedPermissions.length !== (user.permissions?.length || 0) ||
-      selectedPermissions.some(p => !user.permissions?.includes(p))
-    return roleChanged || permsChanged
-  }, [selectedRole, selectedPermissions, user])
+    return selectedRole !== user.role || changeCount > 0
+  }, [selectedRole, user.role, changeCount])
 
   // Get available roles
   const availableRoles = useMemo(() => {
@@ -48,16 +60,22 @@ export const PermissionsTab = memo(function PermissionsTab({ user }: Permissions
   // Get available permissions for the selected role
   const availablePermissions = useMemo(() => {
     return Object.values(PERMISSIONS || {})
-  }, [])
+      .filter(perm => {
+        if (!searchQuery) return true
+        return perm.toLowerCase().includes(searchQuery.toLowerCase())
+      })
+  }, [searchQuery])
 
   const handleRoleChange = useCallback((newRole: string) => {
-    setSelectedRole(newRole as 'ADMIN' | 'CLIENT' | 'TEAM_MEMBER' | 'TEAM_LEAD' | 'STAFF' | 'VIEWER')
+    setSelectedRole(newRole)
     setError(null)
-    // Optionally update permissions based on role
+    // Add to history
+    setChangeHistory(prev => [...prev, { role: selectedRole, permissions: selectedPermissions }])
+    // Update permissions based on role
     if (ROLE_PERMISSIONS && ROLE_PERMISSIONS[newRole]) {
       setSelectedPermissions((ROLE_PERMISSIONS[newRole] as unknown as string[]) as Permission[])
     }
-  }, [])
+  }, [selectedRole, selectedPermissions])
 
   const handlePermissionToggle = useCallback(
     (permission: Permission) => {
@@ -74,10 +92,20 @@ export const PermissionsTab = memo(function PermissionsTab({ user }: Permissions
   )
 
   const handleReset = useCallback(() => {
-    setSelectedRole((user.role as 'ADMIN' | 'CLIENT' | 'TEAM_MEMBER' | 'TEAM_LEAD' | 'STAFF' | 'VIEWER') || 'VIEWER')
+    setSelectedRole(user.role || 'CLIENT')
     setSelectedPermissions((user.permissions as Permission[]) || [])
+    setChangeHistory([])
     setError(null)
   }, [user])
+
+  const handleUndo = useCallback(() => {
+    if (changeHistory.length > 0) {
+      const previousState = changeHistory[changeHistory.length - 1]
+      setSelectedRole(previousState.role)
+      setSelectedPermissions(previousState.permissions)
+      setChangeHistory(prev => prev.slice(0, -1))
+    }
+  }, [changeHistory])
 
   const handleSave = useCallback(async () => {
     if (!selectedRole) {
@@ -113,7 +141,8 @@ export const PermissionsTab = memo(function PermissionsTab({ user }: Permissions
       }
 
       toast.success('Permissions updated successfully')
-      
+      setChangeHistory([])
+
       // Update the selected user in context
       setSelectedUser({
         ...user,
