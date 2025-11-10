@@ -8,6 +8,7 @@ export interface Suggestion {
   text: string
   type: 'name' | 'email' | 'domain' | 'phone' | 'company' | 'department'
   frequency: number
+  score?: number
   highlighted?: string
 }
 
