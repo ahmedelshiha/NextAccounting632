@@ -33,17 +33,8 @@ export default function AdminSidebar({
 }: AdminSidebarProps) {
   const context = useUsersContext()
   const [expandedSections, setExpandedSections] = useState({
-    filters: true,
     analytics: true,
     activity: false
-  })
-
-  const [filters, setFilters] = useState({
-    search: '',
-    role: undefined,
-    status: undefined,
-    department: undefined,
-    dateRange: 'all'
   })
 
   // Generate role distribution data from users
