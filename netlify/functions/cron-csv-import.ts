@@ -56,6 +56,8 @@ const csvImportHandler = async (req: any) => {
   }
 };
 
+export default csvImportHandler;
+
 // Schedule: every 60 seconds
 export const config = {
   schedule: "* * * * *", // Every minute, but with processing limit per run
