@@ -86,6 +86,7 @@ export default function ExistingBusinessTab({
 
   const selectedCountry = watch("country");
   const licenseNumber = watch("licenseNumber");
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const handleLicenseLookup = useCallback(async () => {
     if (!licenseNumber || licenseNumber.length < 3) {
