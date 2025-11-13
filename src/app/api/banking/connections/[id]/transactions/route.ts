@@ -12,10 +12,10 @@ const FilterSchema = z.object({
   endDate: z.string().datetime().optional(),
   minAmount: z.coerce.number().optional(),
   maxAmount: z.coerce.number().optional(),
-  limit: z.coerce.number().min(1).max(100).default(50).optional(),
-  offset: z.coerce.number().min(0).default(0).optional(),
-  sortBy: z.enum(['date', 'amount']).default('date').optional(),
-  sortOrder: z.enum(['asc', 'desc']).default('desc').optional(),
+  limit: z.coerce.number().min(1).max(100).default(50),
+  offset: z.coerce.number().min(0).default(0),
+  sortBy: z.enum(['date', 'amount']).default('date'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
 })
 
 export const GET = withTenantContext(async (
